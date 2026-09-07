@@ -1,0 +1,3 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net9.0</TargetFramework></PropertyGroup><ItemGroup><Compile Include="../../src/FirstMapPopup/RoadPropNames.cs" Link="RoadPropNames.cs" /><Compile Include="../../src/FirstMapPopup/RoadDecalRules.cs" Link="RoadDecalRules.cs" /></ItemGroup></Project>
+
+

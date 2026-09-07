@@ -1,0 +1,2 @@
+<Project Sdk="Microsoft.NET.Sdk"><PropertyGroup><OutputType>Exe</OutputType><TargetFramework>net9.0</TargetFramework></PropertyGroup><ItemGroup><Compile Include="../../src/FirstMapPopup/PopupSettings.cs" Link="PopupSettings.cs" /><Compile Include="../../src/FirstMapPopup/SettingsLocale.cs" Link="SettingsLocale.cs" /><Compile Include="../../src/FirstMapPopup/RoadVisibilityRules.cs" Link="RoadVisibilityRules.cs" /><Compile Include="../../src/FirstMapPopup/RoadDecalRules.cs" Link="RoadDecalRules.cs" /></ItemGroup></Project>
+
