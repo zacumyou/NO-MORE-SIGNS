@@ -19,9 +19,17 @@ namespace FirstMapPopup
         private readonly Dictionary<Entity, RoadObjectKind> _prefabs = new Dictionary<Entity, RoadObjectKind>();
         private readonly HashSet<Entity> _hidden = new HashSet<Entity>();
         private readonly HashSet<Entity> _hiddenStreetLights = new HashSet<Entity>();
-        private readonly HashSet<Entity> _seen = new HashSet<Entity>();
-        private readonly List<Entity> _release = new List<Entity>();
-        private readonly HashSet<Entity> _logged = new HashSet<Entity>();
+        private struct Classification { public RoadObjectKind Kind; public int Scope; }
+        private readonly Dictionary<Entity, Classification> _instances = new Dictionary<Entity, Classification>();
+        private readonly List<Entity> _snapshot = new List<Entity>();
+        private readonly HashSet<Entity> _members = new HashSet<Entity>();
+        private bool _initialized;
+        private int _cursor;
+        private readonly List<Entity> _pending = new List<Entity>();
+        private int _pendingCursor;
+        private readonly HashSet<Entity> _queued = new HashSet<Entity>();
+        private readonly System.Diagnostics.Stopwatch _budget = new System.Diagnostics.Stopwatch();
+        private const int MaxObjectsPerUpdate = 256;
         private PrefabSystem _prefabSystem;
         private int _lastMask = -1;
         private int _refresh;
@@ -30,7 +38,7 @@ namespace FirstMapPopup
 
         internal bool IsHiddenStreetLightSource(Entity owner)
         {
-            if (Mod.Settings == null || !Mod.Settings.AnyStreetLightsHidden()) return false;
+            if (_hiddenStreetLights.Count == 0) return false;
             for (int depth = 0; depth < 32 && EntityManager.Exists(owner); depth++)
             {
                 if (EntityManager.HasComponent<Deleted>(owner) || EntityManager.HasComponent<Temp>(owner)
@@ -65,9 +73,16 @@ namespace FirstMapPopup
             base.OnGameLoaded(context);
             ReleaseAll();
             _prefabs.Clear();
-            _logged.Clear();
             _lastMask = -1;
             _refresh = 0;
+            _snapshot.Clear();
+            _members.Clear();
+            _initialized = false;
+            _instances.Clear();
+            _pending.Clear();
+            _pendingCursor = 0;
+            _queued.Clear();
+            _cursor = 0;
         }
 
         protected override void OnUpdate()
@@ -75,57 +90,88 @@ namespace FirstMapPopup
             var s = Mod.Settings;
             int mask = s == null ? 0 : s.GetMask(false) | (s.GetMask(true) << 6);
             if (GameManager.instance == null || GameManager.instance.gameMode != GameMode.Game) mask = 0;
-            if (mask == 0)
+            bool settingsChanged = mask != _lastMask;
+            // Settings reuse classifications. Periodic reconciliation has the same budget.
+            if (!_initialized || (_cursor >= _snapshot.Count && --_refresh <= 0))
             {
-                ReleaseAll();
-                _lastMask = mask;
-                return;
-            }
-
-            // Scan the city on load/settings changes; otherwise only changed objects.
-            // An occasional reconciliation catches parent-only edits and late prefab loads.
-            bool full = mask != _lastMask || --_refresh <= 0;
-            if (full)
-            {
-                _refresh = 300;
+                _snapshot.Clear();
+                _members.Clear();
+                using (var all = _all.ToEntityArray(Allocator.Temp))
+                    foreach (var entity in all)
+                        if (_members.Add(entity)) _snapshot.Add(entity);
+                // Include formerly hidden objects whose ownership/type has changed.
+                foreach (var entity in _hidden)
+                    if (_members.Add(entity)) _snapshot.Add(entity);
+                _initialized = true;
+                _instances.Clear();
                 _prefabs.Clear();
-                _seen.Clear();
+                _cursor = 0;
+                _refresh = 300;
+                // Purge destroyed objects without issuing redundant render invalidations.
+                _hidden.RemoveWhere(e => !EntityManager.Exists(e) || EntityManager.HasComponent<Deleted>(e));
+                _hiddenStreetLights.RemoveWhere(e => !_hidden.Contains(e));
             }
-            using (var entities = (full ? _all : _changed).ToEntityArray(Allocator.Temp))
+            if (settingsChanged) _cursor = 0;
+            using (var changed = _changed.ToEntityArray(Allocator.Temp))
+                foreach (var entity in changed)
+                {
+                    if (_queued.Add(entity)) _pending.Add(entity);
+                    if (_members.Add(entity)) _snapshot.Add(entity);
+                }
+
+            _budget.Restart();
             using (var commands = new EntityCommandBuffer(Allocator.Temp))
             {
-                foreach (var entity in entities)
+                int processed = 0, transitions = 0;
+                // Reserve half the count budget for the snapshot during construction.
+                while (_pendingCursor < _pending.Count && processed < 2048 && transitions < MaxObjectsPerUpdate / 2
+                    && _budget.Elapsed.TotalMilliseconds < 1)
                 {
-                    if (full) _seen.Add(entity);
-                    var category = ClassifyRoadInstance(entity, out int roadScope);
-                    bool hide = RoadVisibilityRules.ShouldHide(mask, roadScope, category);
-                    bool transition = hide ? _hidden.Add(entity) : _hidden.Remove(entity);
-                    if (hide && category == RoadObjectKind.StreetLight) _hiddenStreetLights.Add(entity);
-                    else _hiddenStreetLights.Remove(entity);
-                    if (transition) QueueRenderRefresh(commands, entity);
-                    if (category != RoadObjectKind.None)
-                    {
-                        var prefab = EntityManager.GetComponentData<PrefabRef>(entity).m_Prefab;
-                        if (_logged.Add(prefab))
-                            Mod.Log.Info($"Road object category: {category}; prefab: {_prefabSystem.GetPrefabName(prefab)}");
-                    }
+                    var entity = _pending[_pendingCursor++];
+                    _queued.Remove(entity);
+                    _instances.Remove(entity);
+                    if (ApplyVisibility(entity, mask, commands)) transitions++;
+                    processed++;
                 }
-                if (full)
+                while (_cursor < _snapshot.Count && processed < 4096 && transitions < MaxObjectsPerUpdate
+                    && _budget.Elapsed.TotalMilliseconds < 2)
                 {
-                    _release.Clear();
-                    foreach (var entity in _hidden)
-                        if (!_seen.Contains(entity)) _release.Add(entity);
-                    foreach (var entity in _release)
-                    {
-                        _hidden.Remove(entity);
-                        _hiddenStreetLights.Remove(entity);
-                        QueueRenderRefresh(commands, entity);
-                    }
+                    if (ApplyVisibility(_snapshot[_cursor++], mask, commands)) transitions++;
+                    processed++;
                 }
                 commands.Playback(EntityManager);
             }
-            if (mask != _lastMask) Mod.Log.Info($"Road hiding mask: {mask}; hidden objects: {_hidden.Count}");
+            if (_pendingCursor == _pending.Count)
+            {
+                _pending.Clear();
+                _pendingCursor = 0;
+            }
+            _budget.Stop();
+            if (settingsChanged) Mod.Log.Info($"Road hiding mask: {mask}; applying incrementally");
             _lastMask = mask;
+        }
+
+        private bool ApplyVisibility(Entity entity, int mask, EntityCommandBuffer commands)
+        {
+            if (!EntityManager.Exists(entity) || EntityManager.HasComponent<Deleted>(entity)
+                || EntityManager.HasComponent<Temp>(entity) || !EntityManager.HasComponent<PrefabRef>(entity))
+            {
+                _hidden.Remove(entity);
+                _hiddenStreetLights.Remove(entity);
+                _instances.Remove(entity);
+                return false;
+            }
+            if (!_instances.TryGetValue(entity, out var classification))
+            {
+                classification.Kind = ClassifyRoadInstance(entity, out classification.Scope);
+                _instances[entity] = classification;
+            }
+            bool hide = RoadVisibilityRules.ShouldHide(mask, classification.Scope, classification.Kind);
+            bool transition = hide ? _hidden.Add(entity) : _hidden.Remove(entity);
+            if (hide && classification.Kind == RoadObjectKind.StreetLight) _hiddenStreetLights.Add(entity);
+            else _hiddenStreetLights.Remove(entity);
+            if (transition) QueueRenderRefresh(commands, entity);
+            return transition;
         }
 
         private RoadObjectKind ClassifyRoadInstance(Entity entity, out int roadScope)

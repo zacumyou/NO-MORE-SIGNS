@@ -43,7 +43,7 @@ namespace FirstMapPopup
         public bool EnableAll { set { SetAll(true); ApplyAndSave(); } }
         [SettingsUISection("General", "Actions"), SettingsUIButton]
         public bool DisableAll { set { SetAll(false); ApplyAndSave(); } }
-        [SettingsUISection("General", "About"), SettingsUIMultilineText]
+        [SettingsUISection("General", "About")]
         public string VersionInfo
         {
             get { var v = typeof(Mod).Assembly.GetName().Version; return $"{Mod.DisplayName} · v{v.Major}.{v.Minor}.{v.Build}"; }

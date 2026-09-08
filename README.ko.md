@@ -1,4 +1,4 @@
-# NO MORE SIGNS 1.4.0
+# NO MORE SIGNS 1.4.2
 
 ## 옵션 구성
 옵션 → NO MORE SIGNS → 설정

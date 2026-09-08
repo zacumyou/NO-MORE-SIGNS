@@ -1,6 +1,6 @@
 # NO MORE SIGNS
 
-A Cities: Skylines II code mod that hides selected roadside objects and decals. Version **1.4.0**.
+A Cities: Skylines II code mod that hides selected roadside objects and decals. Version **1.4.2**.
 
 [한국어 안내](README.ko.md)
 
@@ -55,3 +55,7 @@ They cover prop-name/decal classification, 98,304 visibility combinations, defau
 ## License and attribution
 
 MIT. See [LICENSE](LICENSE). The rendering approach adapts work from [NoSpeedLimitMarkings](https://github.com/anonymousprime2020/NoSpeedLimitMarkings); its copyright and MIT notice are preserved in [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt). Game and toolchain dependencies retain their own licenses.
+
+## Performance in 1.4.2
+
+Visibility changes are applied incrementally with cached classifications. Large cities can take several seconds to finish a toggle. Each tracking update allows up to 256 transitions and uses a soft 2 ms loop budget; query collection, command playback and engine rendering are outside that budget. In-game frame-time improvement has not yet been measured.

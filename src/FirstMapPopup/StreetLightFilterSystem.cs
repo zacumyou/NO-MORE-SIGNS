@@ -34,7 +34,7 @@ namespace FirstMapPopup
         {
             // Defensive recovery if a previous frame did not reach the restore system.
             Restore();
-            if (Mod.Settings == null || !Mod.Settings.AnyStreetLightsHidden() || GameManager.instance == null
+            if (Mod.Settings == null || GameManager.instance == null
                 || GameManager.instance.gameMode != GameMode.Game || _tracking.HiddenCount == 0) return;
             var data = _effects.GetEnabledData(false, out JobHandle dependencies);
             dependencies.Complete();
