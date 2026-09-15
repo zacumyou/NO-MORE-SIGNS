@@ -12,7 +12,7 @@ namespace FirstMapPopup
     {
         public const string DisplayName = "NO MORE SIGNS";
         internal static PopupSettings Settings { get; private set; }
-        internal static readonly ILog Log = LogManager.GetLogger("FirstMapPopup").SetShowsErrorsInUI(false);
+        internal static readonly ILog Log = LogManager.GetLogger("NoMoreSigns").SetShowsErrorsInUI(false);
         public void OnLoad(UpdateSystem updateSystem)
         {
             Settings = new PopupSettings(this);
@@ -24,7 +24,7 @@ namespace FirstMapPopup
             updateSystem.UpdateBefore<RoadObjectRenderSystem, BatchInstanceSystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateBefore<StreetLightFilterSystem, LightCullingSystem>(SystemUpdatePhase.Rendering);
             updateSystem.UpdateAfter<StreetLightRestoreSystem, LightCullingSystem>(SystemUpdatePhase.Rendering);
-            Log.Info("FirstMapPopup loaded.");
+            Log.Info("NO MORE SIGNS loaded.");
         }
         public void OnDispose()
         {

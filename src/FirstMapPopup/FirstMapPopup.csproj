@@ -4,7 +4,9 @@
 		<Configurations>Debug;Release</Configurations>
 		<AssemblyTitle>NO MORE SIGNS</AssemblyTitle>
 		<Product>NO MORE SIGNS</Product>
-		<Version>1.4.2</Version>
+		<Version>1.4.3</Version>
+		<!-- Keep the published assembly identity for existing subscribers. -->
+		<AssemblyName>FirstMapPopup</AssemblyName>
 	
 		<!--The file where mod information which is required for publishing mod on PDX mods are stored-->
 		<PublishConfigurationPath>Properties\PublishConfiguration.xml</PublishConfigurationPath>

@@ -1,45 +1,98 @@
 <Publish>
-	<!--Id must be set in order to update existed mod. it is not required for publishing mod for the first time-->
-	<ModId Value="" />
-	<!--Name of the mod to display to players-->
-	<DisplayName Value="NO MORE SIGNS" />
-	<!--Short description of the mod-->
-	<ShortDescription Value="Visual-only toggles for roadside signs, traffic lights and road props." />
-	<!--Long description of the mod. Single line or multi line. Supports minimal markdown subset-->
-	<!--LongDescription Value="Hide roadside objects using transient rendering data. No custom city-save data or traffic-rule changes." /-->
-	<LongDescription>
-Hide roadside objects using transient rendering data. No custom city-save data or traffic-rule changes.
-	</LongDescription>
-	<!--Thumbnail-->
-	<Thumbnail Value="" />
-	<!--Screenshot, can be set multiple times-->
-	<Screenshot Value="" />
-	<!--Tag, can be set multiple times-->
-	<Tag Value="" />
-	<!--Link to the forum post where the mod can be discussed-->
-	<ForumLink Value="" />
-	<!--Version of the mod-->
-	<ModVersion Value="1.4.0" />
-	<!--Recommended version of the base game to use the mod-->
-	<GameVersion Value="1.0.*" />
-	<!--Dependency for the mod, can be set multiple times-->
-	<Dependency Id="" />
-	<!--Required DLC, can be set multiple times. Supported values are "Landmark Buildings", "San Fransisco Set", "Beach Properties", "Urban Promenades", "Modern Architecture"-->
-	<RequiredDLC Value="" />
-	<!--Change log for new version. Single line or multi line. Supports minimal markdown subset-->
-	<ChangeLog Value="" />
-	<!--<ChangeLog>
-	</ChangeLog>-->
-	<!--External link, can be set multiple times. supported types are "discord", "github", "youtube", "twitch", "x", "paypal", "patreon", "buymeacoffee", "kofi", "crowdin", "gitlab", "gofundme"-->
-	<ExternalLink Type="" Url="" />
-	<!--Supported values Public, Private, Unlisted-->
-	<AccessLevel Value="Public" />
+  <ModId Value="158284" />
+  <DisplayName Value="NO MORE SIGNS" />
+  <Thumbnail Value="Properties/Thumbnail.jpg" />
+  <ShortDescription Value="Hide roadside signs, lights, props and road decals, with separate toggles for regular roads and highways." />
+  <LongDescription># NO MORE SIGNS
+
+“Experience the magic of making signs and road decals disappear.” — CHOSHO, 2026
+
+NO MORE SIGNS is a simple mod that lets you hide the props and marking decals that appear automatically when you build roads.
+
+**Turn a toggle ON to hide its objects. Turn it OFF to show them again.** You can change these settings in the in-game options menu whenever you like.
+
+## What can you hide?
+
+*   Roadside signs
+*   Traffic lights
+*   Street lights
+*   Other road props, including hydrants and electrical boxes
+*   Road speed-limit decals
+*   Road arrow decals
+
+Each category can be controlled separately for **regular roads and highways**. Go ahead—try a highway without street lights!
+
+**Only objects belonging to roads are affected.**
+
+## Save files
+
+This mod hides objects visually without deleting them or adding custom data to your city saves. You can disable or uninstall it to return to the game's normal display behavior.
+
+As a precaution, please save your city under a different filename before enabling or disabling the mod.
+
+## Development and source code
+
+This mod was created with the help of **GPT-6 Astra**. For transparency, the full source code is available on GitHub.
+
+I plan to keep the mod maintained as the game receives updates. If I am unable to continue for any reason, you are welcome to modify and redistribute it.
+
+GitHub: [https://github.com/zacumyou/NO-MORE-SIGNS](https://github.com/zacumyou/NO-MORE-SIGNS)
+
+## Languages
+
+Includes basic translations for **English, Korean, Japanese, Chinese (Simplified and Traditional), and Spanish**.
+
+# 한국어 설명
+
+“표지판과 도로 데칼을 삭제하는 마법을 경험해보세요.” — CHOSHO, 2026
+
+NO MORE SIGNS는 도로를 설치했을 때 기본적으로 나타나는 프롭과 노면 표시 데칼을 보이지 않게 설정할 수 있는 지극히 단순한 모드입니다.
+
+**토글을 ON으로 켜면 해당 소품이 사라지고, OFF로 끄면 다시 나타납니다.** 취향에 따라 인게임 옵션에서 언제든 켜고 끌 수 있습니다.
+
+## 숨길 수 있는 요소
+
+*   도로 표지판
+*   도로 신호등
+*   가로등
+*   소화전·전선함 등 기타 도로 관련 프롭
+*   도로 속도제한 데칼
+*   도로 화살표 데칼
+
+이 모든 항목을 **고속도로와 일반도로로 구분해 각각 설정**할 수 있습니다. 감히 고속도로에 가로등이 보이지 않도록 해보세요!
+
+**도로에 속한 소품과 데칼에만 적용됩니다.**
+
+## 저장 파일 안내
+
+이 모드는 소품을 삭제하거나 도시 저장 파일에 모드 전용 데이터를 추가하지 않고, 화면에서만 보이지 않게 처리합니다. 모드를 비활성화하거나 제거하면 게임의 기본 표시 방식으로 돌아갑니다.
+
+그래도 혹시 모르니 모드를 켜거나 끄기 전에는 현재 도시를 다른 이름의 파일로 저장해 주세요.
+
+## 개발 및 소스 코드
+
+이 모드는 **GPT-6 Astra**의 도움을 받아 만들어졌습니다. 투명성을 위해 모든 소스 코드를 GitHub에 공개했습니다.
+
+게임이 업데이트될 때마다 모드가 정상적으로 작동하도록 꾸준히 유지보수할 계획입니다. 혹시 어떤 사정으로 유지보수를 계속할 수 없게 된다면, 여러분이 자유롭게 모드를 수정하고 재배포하셔도 좋습니다.
+
+GitHub: [https://github.com/zacumyou/NO-MORE-SIGNS](https://github.com/zacumyou/NO-MORE-SIGNS)
+
+## 지원 언어
+
+**한국어·영어·일본어·중국어(간체·번체)·스페인어** 기본 번역을 지원합니다.</LongDescription>
+  <ModVersion Value="1.4.3" />
+  <GameVersion Value="1.6.*" />
+  <AccessLevel Value="Public" />
+  <Tag Value="Code Mod" />
+  <ExternalLink Type="github" Url="https://github.com/zacumyou/NO-MORE-SIGNS" />
+  <ForumLink Value="https://forum.paradoxplaza.com/forum/threads/no-more-signs-roadside-props-and-decals-questions-bug-reports.1940756/" />
+  <ChangeLog># 1.4.3
+
+- Compatibility maintenance for Cities: Skylines II 1.6.x: synchronized the publishing configuration with the existing 1.6.* compatibility metadata and rebuilt against the installed 1.6.2f1 game assemblies.
+- Replaced the temporary FirstMapPopup name in logs with NO MORE SIGNS / NoMoreSigns.
+- Preserved the assembly identity, saved settings, and road visibility behavior for existing subscribers.
+
+- Cities: Skylines II 1.6.x 호환성 유지보수: 배포 설정을 기존 1.6.* 호환 정보와 일치시키고, 설치된 1.6.2f1 게임 어셈블리로 재빌드했습니다.
+- 로그에 남아 있던 FirstMapPopup 임시 이름을 정리했습니다.
+- 기존 구독자를 위한 어셈블리 식별자, 저장된 설정, 도로 표시 동작을 유지했습니다.</ChangeLog>
 </Publish>
-
-
-
-
-
-
-
-
